@@ -1,0 +1,33 @@
+task run(type: Exec){
+	workingDir 'src'
+	commandLine 'python', 'main.py'
+}
+
+task zipImages(type: Zip){
+	baseName = "binaryImages"
+	destinationDir = file("src/rbm_training_images")
+	from 'src/rbm_training_images'
+	include "*.png"
+}
+
+task unzipImages(type: Copy){
+	finalizedBy 'delTmpDir'
+	from zipTree('src/rbm_training_images/binaryImages.zip')
+	into 'src/rbm_training_images'
+}
+
+task delTmpDir(type: Delete){
+	mustRunAfter 'unzipImages'
+	delete 'build/tmp'
+}
+
+task delAllImages(type: Delete){
+	delete fileTree(dir:'src/rbm_training_images', include:"*.png")
+}
+
+task genPickleFile(type: Exec){
+	dependsOn 'unzipImages'
+	finalizedBy 'delAllImages'
+	workingDir 'src'
+	commandLine 'python', 'image_to_pickle.py', './rbm_training_images/'
+}
