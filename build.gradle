@@ -3,6 +3,11 @@ task run(type: Exec){
 	commandLine 'python', 'main.py'
 }
 
+task run3(type: Exec){
+	workingDir 'src'
+	commandLine 'python3', 'main.py'
+}
+
 task zipImages(type: Zip){
 	baseName = "binaryImages"
 	destinationDir = file("src/rbm_training_images")
