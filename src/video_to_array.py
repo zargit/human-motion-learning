@@ -5,18 +5,18 @@ Reads each video file and stores each frames as an array , and store all the fra
 import numpy as np 
 import cv2
 import os
+import pickle
+#import cPickle as pickle
 
 filepath = 'data/'
 
 videos = []
-
 for f in os.listdir(filepath):
 	if f.split('.')[-1] == 'avi':
 		if os.path.isfile(filepath + str(f)):
 			cap = cv2.VideoCapture(filepath + str(f))
 
 			frames = []
-
 			while True:
 				ret, frame = cap.read()
 
@@ -28,13 +28,15 @@ for f in os.listdir(filepath):
 				frames.append(gray)
 				cv2.waitKey(10)
 
-			frames = np.array(frames)
+			frames = np.array(frames, dtype = np.float64)
 			videos.append(frames)
 			cap.release()
 		
 videos = np.array(videos)
-			
+
 #print(videos)
 #print(len(videos))
+
+pickle.dump(videos,open('data/videos_to_pickle.p','wb'), -1)
 
 cv2.destroyAllWindows()
